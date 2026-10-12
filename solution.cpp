@@ -1,7 +1,8 @@
 #include <iostream>
 using namespace std;
 
-// Node structure for singly circular linked list
+// Node structure for singly circular linked list (单循环链表)
+// Each node only has a next pointer, forming a circle
 struct Node {
     int data;
     Node* next;
@@ -79,6 +80,9 @@ void josephusSimulation(Node*& head, Node*& tail, int n, int m) {
         tail = nullptr;
         remaining = 0;
     }
+    
+    // Ensure output is flushed
+    cout.flush();
 }
 
 int main() {
