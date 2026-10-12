@@ -46,7 +46,7 @@ public:
         Node* current = head;
         Node* prev = tail; // prev points to the node before current
         
-        while (size > 0) {
+        while (size > 1) {
             // Move (m-1) steps to find the m-th node
             for (int i = 1; i < m; i++) {
                 prev = current;
@@ -74,24 +74,30 @@ public:
             // Delete the node and update size
             delete toDelete;
             size--;
-            
-            // Handle case when list becomes empty
-            if (size == 0) {
-                head = nullptr;
-                tail = nullptr;
-            }
+        }
+        
+        // Handle the last remaining node
+        if (size == 1 && head != nullptr) {
+            cout << head->data << endl;
+            delete head;
+            head = nullptr;
+            tail = nullptr;
+            size = 0;
         }
     }
     
     // Destructor to clean up memory
     ~CircularLinkedList() {
-        if (head == nullptr) return;
+        if (head == nullptr || size == 0) return;
+        
+        // Break the circular link to avoid infinite loop
+        tail->next = nullptr;
         
         Node* current = head;
         Node* nextNode;
         
         // Delete all nodes
-        for (int i = 0; i < size; i++) {
+        while (current != nullptr) {
             nextNode = current->next;
             delete current;
             current = nextNode;
