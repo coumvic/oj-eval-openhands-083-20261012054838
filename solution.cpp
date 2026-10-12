@@ -5,117 +5,94 @@ using namespace std;
 struct Node {
     int data;
     Node* next;
-    
-    Node(int val) : data(val), next(nullptr) {}
 };
 
-class CircularLinkedList {
-private:
-    Node* head;
-    Node* tail;
-    int size;
-    
-public:
-    CircularLinkedList() : head(nullptr), tail(nullptr), size(0) {}
-    
-    // Build circular linked list with n nodes (1 to n)
-    void buildList(int n) {
-        if (n <= 0) return;
-        
-        // Create first node
-        head = new Node(1);
-        tail = head;
-        size = 1;
-        
-        // Create remaining nodes
-        for (int i = 2; i <= n; i++) {
-            Node* newNode = new Node(i);
-            tail->next = newNode;
-            tail = newNode;
-            size++;
-        }
-        
-        // Make it circular
-        tail->next = head;
+// Create a new node
+Node* createNode(int val) {
+    Node* newNode = new Node;
+    newNode->data = val;
+    newNode->next = nullptr;
+    return newNode;
+}
+
+// Build circular linked list with n nodes (1 to n)
+Node* buildCircularList(int n, Node*& tail) {
+    if (n <= 0) {
+        tail = nullptr;
+        return nullptr;
     }
+    
+    // Create first node
+    Node* head = createNode(1);
+    tail = head;
+    
+    // Create remaining nodes
+    for (int i = 2; i <= n; i++) {
+        Node* newNode = createNode(i);
+        tail->next = newNode;
+        tail = newNode;
+    }
+    
+    // Make it circular
+    tail->next = head;
+    return head;
+}
     
     // Josephus simulation: delete every m-th node and print deleted values
-    void josephusSimulation(int m) {
-        if (head == nullptr || size == 0) return;
-        
-        Node* current = head;
-        Node* prev = tail; // prev points to the node before current
-        
-        while (size > 1) {
-            // Move (m-1) steps to find the m-th node
-            for (int i = 1; i < m; i++) {
-                prev = current;
-                current = current->next;
-            }
-            
-            // Delete current node
-            Node* toDelete = current;
-            cout << toDelete->data << endl;
-            
-            // Update links
-            prev->next = current->next;
-            
-            // Update head/tail if necessary
-            if (toDelete == head) {
-                head = current->next;
-            }
-            if (toDelete == tail) {
-                tail = prev;
-            }
-            
-            // Move to next node
+void josephusSimulation(Node*& head, Node*& tail, int n, int m) {
+    if (head == nullptr || n <= 0) return;
+    
+    Node* current = head;
+    Node* prev = tail; // prev points to the node before current
+    int remaining = n;
+    
+    while (remaining > 1) {
+        // Move (m-1) steps to find the m-th node
+        for (int i = 1; i < m; i++) {
+            prev = current;
             current = current->next;
-            
-            // Delete the node and update size
-            delete toDelete;
-            size--;
         }
         
-        // Handle the last remaining node
-        if (size == 1 && head != nullptr) {
-            cout << head->data << endl;
-            delete head;
-            head = nullptr;
-            tail = nullptr;
-            size = 0;
+        // Delete current node
+        Node* toDelete = current;
+        cout << toDelete->data << endl;
+        
+        // Update links
+        prev->next = current->next;
+        
+        // Update head/tail if necessary
+        if (toDelete == head) {
+            head = current->next;
         }
+        if (toDelete == tail) {
+            tail = prev;
+        }
+        
+        // Move to next node
+        current = current->next;
+        
+        // Delete the node and update remaining count
+        delete toDelete;
+        remaining--;
     }
     
-    // Destructor to clean up memory
-    ~CircularLinkedList() {
-        if (head == nullptr || size == 0) return;
-        
-        // Break the circular link to avoid infinite loop
-        tail->next = nullptr;
-        
-        Node* current = head;
-        Node* nextNode;
-        
-        // Delete all nodes
-        while (current != nullptr) {
-            nextNode = current->next;
-            delete current;
-            current = nextNode;
-        }
-        
+    // Handle the last remaining node
+    if (remaining == 1 && head != nullptr) {
+        cout << head->data << endl;
+        delete head;
         head = nullptr;
         tail = nullptr;
-        size = 0;
+        remaining = 0;
     }
-};
+}
 
 int main() {
     int n, m;
     cin >> n >> m;
     
-    CircularLinkedList list;
-    list.buildList(n);
-    list.josephusSimulation(m);
+    Node* tail = nullptr;
+    Node* head = buildCircularList(n, tail);
+    josephusSimulation(head, tail, n, m);
     
     return 0;
 }
