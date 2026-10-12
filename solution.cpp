@@ -87,8 +87,13 @@ void josephusSimulation(Node*& head, Node*& tail, int n, int m) {
 }
 
 int main() {
+    ios::sync_with_stdio(false);
+    cin.tie(nullptr);
+    
     int n, m;
-    cin >> n >> m;
+    if (!(cin >> n >> m)) {
+        return 0;
+    }
     
     Node* tail = nullptr;
     Node* head = buildCircularList(n, tail);
