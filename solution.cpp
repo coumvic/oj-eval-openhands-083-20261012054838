@@ -7,35 +7,30 @@ struct Node {
     Node* next;
 };
 
-// Create a new node
-Node* createNode(int val) {
-    Node* newNode = new Node;
-    newNode->data = val;
-    newNode->next = nullptr;
-    return newNode;
-}
-
 // Build circular linked list with n nodes (1 to n)
-Node* buildCircularList(int n, Node*& tail) {
-    if (n <= 0) {
-        tail = nullptr;
-        return nullptr;
-    }
+void buildCircularList(int n, Node*& head, Node*& tail) {
+    head = nullptr;
+    tail = nullptr;
+    
+    if (n <= 0) return;
     
     // Create first node
-    Node* head = createNode(1);
+    head = new Node;
+    head->data = 1;
+    head->next = nullptr;
     tail = head;
     
     // Create remaining nodes
     for (int i = 2; i <= n; i++) {
-        Node* newNode = createNode(i);
+        Node* newNode = new Node;
+        newNode->data = i;
+        newNode->next = nullptr;
         tail->next = newNode;
         tail = newNode;
     }
     
     // Make it circular
     tail->next = head;
-    return head;
 }
     
     // Josephus simulation: delete every m-th node and print deleted values
@@ -87,16 +82,12 @@ void josephusSimulation(Node*& head, Node*& tail, int n, int m) {
 }
 
 int main() {
-    ios::sync_with_stdio(false);
-    cin.tie(nullptr);
-    
     int n, m;
-    if (!(cin >> n >> m)) {
-        return 0;
-    }
+    cin >> n >> m;
     
+    Node* head = nullptr;
     Node* tail = nullptr;
-    Node* head = buildCircularList(n, tail);
+    buildCircularList(n, head, tail);
     josephusSimulation(head, tail, n, m);
     
     return 0;
